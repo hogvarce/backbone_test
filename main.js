@@ -30,6 +30,7 @@ $(function() {
     template: _.template( App.get("template.html") ),
     initialize: function () {
         this.model.on('change', this.render, this);
+				this.model.on('destroy', this.remove, this);
     },
     validate: function (attrs) {
     	if ( ! $.trim(attrs.title) ) {
@@ -41,12 +42,21 @@ $(function() {
 			this.$el.html( template );
 			return this;
 		},
+		remove:function(){
+			this.$el.remove();
+		},
 		events:{
-			'click .edit': 'editTask'
+			'click .edit': 'editTask',
+			'click .delete': 'deleteTask'
 		},
 		editTask: function  () {
+			this.model.set('style', 'green');
 			var newTaskTitle = prompt('Как переименуем задачу?', this.model.get('title'));
 			this.model.set('title', newTaskTitle);
+			this.model.set('style', 'red');
+		},
+		deleteTask: function(){
+			this.model.destroy();
 		}
 	});
 
@@ -71,14 +81,17 @@ $(function() {
 	window.tasksCollection = new App.Collections.Task([
 		{
 			title: 'Сходить в магазин',
+			style: 'red',
 			priority: 4
 		},
 		{
 			title: 'Получить почту!',
+			style: 'red',
 			priority: 3
 		},
 		{
 			title: 'Сходить на работу',
+			style: '',
 			priority: 5
 		},
 	]);
